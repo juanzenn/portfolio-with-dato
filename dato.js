@@ -3,18 +3,18 @@ const fetch = require('node-fetch')
 const APItoken = process.env.DATO_CMS_TOKEN
 
 // This file contains all my queries for DATOCMS
-// Boiler plate for fetching 
-const fetchQuery = async (queryString) => {
+// Boiler plate for fetching
+const fetchQuery = async queryString => {
   const data = await fetch('https://graphql.datocms.com/', {
-    method: "POST",
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': `Bearer ${APItoken}`
+      Accept: 'application/json',
+      Authorization: `Bearer ${APItoken}`,
     },
     body: JSON.stringify({
-      query: queryString
-    })
+      query: queryString,
+    }),
   })
 
   return data
@@ -41,7 +41,9 @@ const fetchHomepage = async () => {
         ... on TwoColRecord {
           id
           __typename
+          firstColumnTitle
           firstColumn
+          secondColumnTitle
           secondColumn
         }
       }
@@ -56,11 +58,21 @@ const fetchHomepage = async () => {
 // Fetch the Main Navbar
 const fetchMainNavbar = async () => {
   const queryString = `{
-    mainMenu(locale: en) {
+    mainMenu {
       content {
-        id
-        link
-        label
+        ... on MenuDropdownRecord {
+          __typename
+          id
+          title
+          titleLink
+          innerLinks
+        }
+        ... on MenuLinkRecord {
+          __typename
+          id
+          label
+          link
+        }
       }
     }
   }
@@ -91,7 +103,7 @@ const fetchProjectCards = async () => {
   return projectCards.data.allProjectCards
 }
 
-// Fetch services Cards 
+// Fetch services Cards
 const fetchServicesCards = async () => {
   const queryString = `{
     allServiceCards(locale: en) {
@@ -113,10 +125,11 @@ const fetchServicesCards = async () => {
 
 const fetchFooterGroups = async () => {
   const queryString = `{
-    allFooterGroups(locale:en) {
+    allFooterGroups(orderBy: _createdAt_ASC) {
       id
       title
       content {
+        id
         label
         link
       }
@@ -148,10 +161,7 @@ const fetchContactSections = async () => {
           id
           __typename
           link
-          icon {
-            url
-            alt
-          }
+          icon
         },
         ... on QuoteRecord {
           id
@@ -181,11 +191,10 @@ const indexFetch = async () => {
     projectCards,
     serviceCards,
     footerGroups,
-    contactSections
+    contactSections,
   }
 }
 
-
 module.exports = {
-  indexFetch
+  indexFetch,
 }

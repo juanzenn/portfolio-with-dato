@@ -3,8 +3,12 @@ import React from 'react'
 import { indexFetch } from '../dato'
 
 // import sections
+import MainNavbar from '../components/MainNavbar'
 import HeroSection from '../components/HeroSection'
 import TwoColumns from '../components/TwoColumns'
+import ProjectsSections from '../components/ProjectsSection'
+import ServiceSections from '../components/ServiceSections'
+import Footer from '../components/Footer'
 
 export default function Home(props) {
   const {
@@ -13,14 +17,14 @@ export default function Home(props) {
     projectCards,
     serviceCards,
     contactSections,
-    footerGroups
+    footerGroups,
   } = props
 
-  const homepageSlices = (record) => {
-    switch (record["__typename"]) {
-      case "HeroSectionRecord":
+  const homepageSlices = record => {
+    switch (record['__typename']) {
+      case 'HeroSectionRecord':
         return <HeroSection content={record} key={record.id} />
-      case "TwoColRecord":
+      case 'TwoColRecord':
         return <TwoColumns content={record} key={record.id} />
       case 'default':
         return 'Hello...'
@@ -31,23 +35,39 @@ export default function Home(props) {
     <React.Fragment>
       <Head>
         <title>Juan Alvarez - Desarrollo Web</title>
-      </Head>   
+      </Head>
+
+      {/* My nice navbar!!!! */}
+      <MainNavbar content={mainNavbar} />
 
       <main>
         {/* Render the first two sections */}
         {homepage.map(slice => homepageSlices(slice))}
-      </main>   
+
+        <article className='bg-primary-800'>
+          <ProjectsSections content={projectCards} />
+        </article>
+
+        <ServiceSections
+          serviceContent={serviceCards}
+          contactContent={contactSections}
+        />
+      </main>
+
+      <Footer content={footerGroups} />
     </React.Fragment>
   )
 }
 
 export async function getStaticProps(context) {
-  const { homepage,
+  const {
+    homepage,
     mainNavbar,
     projectCards,
     serviceCards,
     footerGroups,
-    contactSections } = await indexFetch()
+    contactSections,
+  } = await indexFetch()
 
   return {
     props: {
@@ -56,7 +76,7 @@ export async function getStaticProps(context) {
       projectCards,
       serviceCards,
       footerGroups,
-      contactSections
-    }
+      contactSections,
+    },
   }
 }

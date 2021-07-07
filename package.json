@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "akar-icons": "^1.7.7",
     "autoprefixer": "^10.2.6",
     "dompurify": "^2.3.0",
     "marked": "^2.1.3",
